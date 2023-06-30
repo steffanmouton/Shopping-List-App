@@ -38,6 +38,13 @@ class _GroceryListState extends State<GroceryList> {
       return;
     }
 
+    if (response.body == 'null') {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final Map<String, dynamic> listData = json.decode(response.body);
 
     final List<GroceryItem> loadedItems = [];
@@ -45,7 +52,7 @@ class _GroceryListState extends State<GroceryList> {
     for (final item in listData.entries) {
       final category = categories.entries
           .firstWhere((categoryItem) =>
-      categoryItem.value.title == item.value['category'])
+              categoryItem.value.title == item.value['category'])
           .value;
       loadedItems.add(GroceryItem(
           id: item.key,
@@ -99,34 +106,30 @@ class _GroceryListState extends State<GroceryList> {
     Widget content = Center(
       child: Text(
         'Add some items to your grocery list!',
-        style: Theme
-            .of(context)
-            .textTheme
-            .headlineSmall,
+        style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
 
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
         itemCount: _groceryItems.length,
-        itemBuilder: (ctx, index) =>
-            Dismissible(
-              key: ValueKey(_groceryItems[index].id),
-              onDismissed: (direction) {
-                _removeItem(_groceryItems[index]);
-              },
-              child: ListTile(
-                title: Text(_groceryItems[index].name),
-                leading: Container(
-                  width: 24,
-                  height: 24,
-                  color: _groceryItems[index].category.color,
-                ),
-                trailing: Text(
-                  _groceryItems[index].quantity.toString(),
-                ),
-              ),
+        itemBuilder: (ctx, index) => Dismissible(
+          key: ValueKey(_groceryItems[index].id),
+          onDismissed: (direction) {
+            _removeItem(_groceryItems[index]);
+          },
+          child: ListTile(
+            title: Text(_groceryItems[index].name),
+            leading: Container(
+              width: 24,
+              height: 24,
+              color: _groceryItems[index].category.color,
             ),
+            trailing: Text(
+              _groceryItems[index].quantity.toString(),
+            ),
+          ),
+        ),
       );
     }
 
@@ -140,10 +143,7 @@ class _GroceryListState extends State<GroceryList> {
       content = Center(
         child: Text(
           _error!,
-          style: Theme
-              .of(context)
-              .textTheme
-              .headlineSmall,
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
       );
     }
@@ -156,6 +156,4 @@ class _GroceryListState extends State<GroceryList> {
       body: content,
     );
   }
-
-
 }
